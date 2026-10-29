@@ -14,8 +14,12 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 9.2.1
-      - run: - run: unzip -q "$(ls rezero_magic*.zip | head -n 1)" -d work
-      - run: cd work/rezero_magic && gradle build
+      - name: Descompactar e compilar
+        run: |
+          ZIP=$(ls rezero_magic*.zip | head -n 1)
+          unzip -q "$ZIP" -d work
+          cd work/rezero_magic
+          gradle build
       - uses: actions/upload-artifact@v4
         with:
           name: rezero-mod
