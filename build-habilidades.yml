@@ -1,0 +1,29 @@
+# Coloque este arquivo em .github/workflows/ do seu repositório (pode ficar ao lado do build.yml do outro mod).
+# Ele compila o zip "habilidades*.zip" que estiver na raiz do repositório.
+name: Build Habilidades
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 9.2.1
+      - name: Descompactar e compilar
+        run: |
+          ZIP=$(ls habilidades*.zip | head -n 1)
+          mkdir -p work
+          unzip -q "$ZIP" -d work
+          cd work/habilidades
+          gradle build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: habilidades-jar
+          path: work/habilidades/build/libs/*.jar
